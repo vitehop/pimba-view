@@ -1,0 +1,306 @@
+/*
+ * Base structure
+ */
+
+/* Move down content because we have a fixed navbar that is 50px tall */
+body {
+    padding-top: 50px;
+}
+
+textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
+    border-color: rgba(229, 103, 23, 0.8);
+    box-shadow: 0 1px 1px rgba(229, 103, 23, 0.075) inset, 0 0 8px rgba(229, 103, 23, 0.6);
+    outline: 0 none;
+}
+
+
+
+@mixin vertical-align {
+    position: relative;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+
+/*
+ * Global add-ons
+ */
+
+.sub-header {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+/*
+ * Top navigation
+ * Hide default border to remove 1px line.
+ */
+.navbar-fixed-top {
+    border: 0;
+}
+
+
+/*
+ * Main content
+ */
+
+.main {
+    padding: 20px;
+}
+@media (min-width: 1024px) {
+    .main {
+        padding-right: 40px;
+        padding-left: 40px;
+    }
+}
+.main .page-header {
+    margin-top: 0;
+}
+
+.perspectives-button{
+    color:#EDEBE6;
+    line-height:50px !important;
+    font-size:20px;
+    font-weight:300;
+    -webkit-font-smoothing: antialiased;
+    font-family:'Open Sans';
+    text-decoration:none;
+    margin:0px;
+    padding:0px;
+}
+
+.perspectives-button:hover{
+    color:#EDEBE6 !important;
+    text-decoration:none !important;
+    opacity:0.3;
+}
+
+.perspectives-button:active{
+    color:#EDEBE6 !important;
+    text-decoration:none !important;
+    opacity:0.3;
+}
+
+.new-perspective{
+    margin:10px;
+}
+
+
+
+.username-button{
+    color:#EDEBE6;
+    line-height:50px !important;
+    font-size:20px;
+    font-weight:300;
+    -webkit-font-smoothing: antialiased;
+    font-family:'Open Sans';
+    text-decoration:none;
+}
+
+.username-button:hover{
+    color:#EDEBE6 !important;
+    text-decoration:none !important;
+    opacity:0.3;
+}
+
+
+h2,h3{
+    -webkit-font-smoothing: antialiased;
+    color: #403B33;
+    font-size: 34px;
+    font-weight: 300;
+    letter-spacing: -.01em;
+    line-height: 1.3;
+    font-family:'Open Sans';
+}
+
+h2{
+    margin-top:0px;
+}
+
+.maincard{
+    cursor:pointer;
+}
+
+/* CARD */
+
+.card {
+    width:200px;
+    background-color:#D6E1C7;
+    border-radius:3px;
+    margin-bottom:3px;
+    box-shadow: 1px 1px 1px #AAAAAA;
+}
+
+.card .title{
+    -webkit-font-smoothing: antialiased;
+    color: #403B33;
+    font-size: 14px;
+    font-weight: 400;
+    font-family: "Open Sans";
+    padding:7px;
+    padding-left:10px;
+    cursor:pointer;
+
+}
+
+.groupcard{
+    width:210px;
+    background-color:#94C7B6;
+    border-radius:3px;
+    padding:5px;
+    padding-top:0px;
+    box-shadow: 1px 1px 1px #AAAAAA;
+}
+
+.groupcard .titlegroup{
+    -webkit-font-smoothing: antialiased;
+    color: #403B33;
+    font-size: 20px;
+    font-weight: 400;
+    font-family: 'Open Sans';
+    padding:10px;
+    padding-left:3px;
+    cursor:pointer;
+}
+
+.navbar-main{
+    background-color:#403B33;
+}
+
+body{
+    background-color:#EDEBE6;
+}
+
+.pers-dropdown-menu{
+    border:0px;
+    margin:0px;
+    width:250px;
+    padding:0px;
+
+    font-family:'Open Sans';
+
+    margin-top:50px !important;
+    margin-left:30px;
+    z-index:1;
+    background-color:#EDEBE6;
+}
+
+.pers-dropdown-menu a{
+    background-color:#EDEBE6;
+}
+
+.pers-dropdown-menu .list-group-item{
+    border:0px;
+    border-bottom: 1px;
+    margin:0px;
+}
+
+
+/* ************ */
+/* MODAL WINDOW */
+/* ************ */
+
+.card-detail-modal{
+    background-color:#EDEBE6;
+    color:#403B33;
+}
+
+.card-detail-modal .modal-title{
+
+    font-size:24px;
+    font-weight:300;
+    -webkit-font-smoothing: antialiased;
+    font-family:'Open Sans';
+    cursor:pointer;
+    margin:0px;
+    padding:0px;
+    display:block;
+    width:100%;
+    border:0px !important;
+    height:100%;
+    overflow: hidden;
+    resize: none;
+}
+
+.placard-title{
+    width:100% !important;
+}
+
+.card-detail-modal .modal-description{
+    font-size:14px;
+    font-weight:400;
+    -webkit-font-smoothing: antialiased;
+    font-family:"Helvetica Neue";
+    cursor:pointer;
+    margin:0px;
+    padding:0px;
+    display:block;
+    width:100%;
+    border:0px !important;
+    height:100%;
+    overflow: hidden;
+    resize: none;
+
+}
+
+.placard-description{
+    width:100% !important;
+}
+
+.placard-modal{
+    background:#D6E1C7 !important;
+    border-radius:3px !important;
+    border:0px !important;
+    /*box-shadow: 1px 1px 1px #AAAAAA !important;*/
+    box-shadow: 0 0 !important;
+
+}
+
+.placard.showing{
+    background:#D6E1C7 !important;
+}
+
+.fuelux .placard.showing textarea.placard-field{
+    background:#D6E1C7 !important;
+}
+
+.card-detail-modal .modal-body .options{
+
+}
+
+/*#COLOR VERDE OSCURO: #94C7B6*/
+/*#COLOR ROJO: #D3643B*/
+/*#COLOR BLANCO: EDEBE6;*/
+/* COLOR NEGRO: #403B33 */
+/* COLOR VERDE SUAVE: #D6E1C7*/
+
+/* LOS ESTILOS A CONTINUACIÓN SON SOLO PARA QUE SE VEA EL EJEMPLO */
+
+.card {
+    float:left;
+    margin-right:10px;
+
+}
+
+.groupcard{
+    float:left;
+    margin-right:10px;
+}
+
+textarea:hover{
+    background:#D6E1C7 !important;
+}
+
+.fuelux .placard-footer{
+    text-align:left !important;
+}
+
+.placard-accept{
+    background:#94C7B6;
+    color:#403B33;
+    border:0px;
+    border-radius: 1px;
+}

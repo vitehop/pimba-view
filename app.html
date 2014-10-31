@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Pimba!</title>
+
+
+
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.4/angular.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.16/angular-resource.min.js"></script>
+    <script src="//www.fuelcdn.com/fuelux/3.1.0/js/fuelux.min.js"></script>
+    <script src="js/jquery.autosize.min.js"></script>
+    <script src="js/app.js"></script>
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//www.fuelcdn.com/fuelux/3.1.0/css/fuelux.min.css">
+    <link rel="stylesheet" href="css/app.css" />
+
+</head>
+
+<body>
+
+
+<!-- *****************
+FIXED-TOP MAIN HEADER
+**********************-->
+
+<div class="navbar navbar-main navbar-fixed-top" role="navigation">
+
+
+    <!-- PERSPECTIVE SELECTOR -->
+
+    <div class="dropdown">
+
+            <ul class="navbar-nav">
+                <li>
+                    <p class="perspectives-button" data-toggle="dropdown" href="#">
+                        My perspectives
+                        <span class="caret"></span>
+                    </p>
+                    <div class="dropdown-menu pers-dropdown-menu list-group" role="menu" aria-labelledby="dLabel">
+
+                        <div class="new-perspective">
+                            <button type="button" class="btn btn-default btn-block">Create new perspective</button>
+                        </div>
+                        <a href="#" class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                Business Overview</h5>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h5 class="list-group-item-heading">Projects</h5>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h5 class="list-group-item-heading">pimba-apiserver board</h5>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h5 class="list-group-item-heading">pimba-bisor board</h5>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h5 class="list-group-item-heading">pimba-client board</h5>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h5 class="list-group-item-heading">pimba-iOS board. This is a very long title.</h5>
+                        </a>
+                    </div>
+                </li>
+            </ul>
+
+        </div>
+
+
+    <!-- USER INFO & OPTIONS -->
+
+    <ul class="navbar-nav navbar-right">
+        <li class="dropdown">
+            <a href="#" class="username-button dropdown-toggle" data-toggle="dropdown">
+                Username
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="#">Logout</a></li>
+            </ul>
+        </li>
+    </ul>
+
+</div>
+
+
+<!-- *****************
+BISOR PLAYGROUND
+********************** -->
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 main">
+
+            <div class="maincard">
+                <h2 data-toggle="modal" data-target=".bs-example-modal-lg">Bussiness overview</h2>
+            </div>
+
+            <div class="card">
+                <div class="title" data-toggle="modal" data-target=".bs-example-modal-lg">
+                    Select operations and buy the object for tonight as the time goes by
+                </div>
+            </div>
+
+            <div class="groupcard">
+                <div class="titlegroup">Discussion</div>
+                <div class="card">
+                    <div class="title" data-toggle="modal" data-target=".bs-example-modal-lg">
+                        Select operations and buy the object for tonight as the time goes by
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="title" data-toggle="modal" data-target=".bs-example-modal-lg">
+                        Select operations and buy the object for tonight as the time goes by
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- *****************
+EDIT/VIEW MODAL WINDOW
+**********************
+Using placard component from fuelUX to allow title and description inline edition
+http://getfuelux.com/javascript.html#placard
+-->
+
+<div class="fuelux modal fade bs-example-modal-lg"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="myLargeModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content card-detail-modal">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+
+                <!--
+                PLACARD: TITLE INLINE EDITION
+                ******************************
+                -->
+
+                <div id="placard-title" class="placard placard-title" data-initialize="placard" data-ellipsis="true">
+                    <div class="placard-popup placard-modal" style="top: -27px; bottom: -34px;"></div>
+
+                    <textarea rows="1" id="txt1" class="form-control placard-field glass modal-title" placeholder="Card title...">Como usuario administrador, quiero poder especificar junto a cada licencia la fecha de expiración de la misma, para que el sistema pueda lanzarme una notificación unos días antes de la fecha.</textarea>
+
+                    <div class="placard-footer">
+                        <a class="placard-cancel" href="#">Cancel</a>
+                        <button class="btn btn-primary btn-xs placard-accept" type="button">Save</button>
+                    </div>
+
+                </div>
+
+
+            </div> <!-- modal-header -->
+
+
+            <div class="modal-body">
+
+                <div class="row">
+
+                    <div class="col-md-9 description">
+
+
+                        <!--
+                        PLACARD: DESCRIPTION INLINE EDITION
+                        ***********************************
+                        -->
+
+                        <div id="placard-description" class="placard placard-description" data-initialize="placard" data-ellipsis="true">
+                            <div class="placard-popup placard-modal" style="top: -27px; bottom: -34px;"></div>
+
+
+
+                            <textarea rows="1"
+                                      id="txt2"
+                                      class="placard-field glass modal-description"
+                                      placeholder="Card description...">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+
+- Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+- Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+- It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
+-It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</textarea>
+
+
+
+                            <div class="placard-footer">
+                                <a class="placard-cancel" href="#">Cancel</a>
+                                <button class="btn btn-primary btn-xs placard-accept" type="button">Save</button>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-3 options">
+
+                        <button type="button" class="modal-buttons btn btn-default btn-block">Go into</button>
+                        <button type="button" class="btn btn-default btn-block">Move card to...</button>
+                        <button type="button" class="btn btn-default btn-block">Clone card in...</button>
+                        <button type="button" class="btn btn-default btn-block">Save as perspective</button>
+                        <button type="button" class="btn btn-default btn-block">Share perspective</button>
+                        <button type="button" class="btn btn-default btn-block">Delete card</button>
+
+                    </div>
+
+                </div>
+
+            </div> <!-- modal-body -->
+
+        </div> <!-- modal-content -->
+
+    </div> <!-- modal-dialog -->
+
+</div> <!-- modal -->
+
+
+</body>
+
+
+</html>
