@@ -65,7 +65,7 @@ textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
     font-size:20px;
     font-weight:300;
     -webkit-font-smoothing: antialiased;
-    font-family:'Open Sans';
+    font-family:'Helvetica Neue';
     text-decoration:none;
     margin:0px;
     padding:0px;
@@ -95,7 +95,7 @@ textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
     font-size:20px;
     font-weight:300;
     -webkit-font-smoothing: antialiased;
-    font-family:'Open Sans';
+    font-family:'Helvetica Neue';
     text-decoration:none;
 }
 
@@ -113,7 +113,7 @@ h2,h3{
     font-weight: 300;
     letter-spacing: -.01em;
     line-height: 1.3;
-    font-family:'Open Sans';
+    font-family:'Helvetica Neue';
 }
 
 h2{
@@ -139,7 +139,7 @@ h2{
     color: #403B33;
     font-size: 14px;
     font-weight: 400;
-    font-family: "Open Sans";
+    font-family: "Helvetica Neue";
     padding:7px;
     padding-left:10px;
     cursor:pointer;
@@ -160,7 +160,7 @@ h2{
     color: #403B33;
     font-size: 20px;
     font-weight: 400;
-    font-family: 'Open Sans';
+    font-family: 'Helvetica Neue';
     padding:10px;
     padding-left:3px;
     cursor:pointer;
@@ -180,7 +180,7 @@ body{
     width:250px;
     padding:0px;
 
-    font-family:'Open Sans';
+    font-family:'Helvetica Neue';
 
     margin-top:50px !important;
     margin-left:30px;
@@ -208,12 +208,12 @@ body{
     color:#403B33;
 }
 
-.card-detail-modal .modal-title{
+#modal-title{
 
     font-size:24px;
     font-weight:300;
     -webkit-font-smoothing: antialiased;
-    font-family:'Open Sans';
+    font-family:'Helvetica Neue';
     cursor:pointer;
     margin:0px;
     padding:0px;
@@ -225,11 +225,12 @@ body{
     resize: none;
 }
 
-.placard-title{
-    width:100% !important;
+#modal-title:hover{
+    background-color: #f5f5f5 !important;
 }
 
-.card-detail-modal .modal-description{
+
+#modal-description{
     font-size:14px;
     font-weight:400;
     -webkit-font-smoothing: antialiased;
@@ -246,25 +247,83 @@ body{
 
 }
 
-.placard-description{
-    width:100% !important;
+#modal-description:hover{
+    background-color: #f5f5f5 !important;
 }
 
-.placard-modal{
-    background:#D6E1C7 !important;
-    border-radius:3px !important;
-    border:0px !important;
-    /*box-shadow: 1px 1px 1px #AAAAAA !important;*/
-    box-shadow: 0 0 !important;
+.note-editor{
+    background-color: #f5f5f5;
+    border: 1px solid #e3e3e3;
+    border-radius: 3px;
+}
+
+
+.note-toolbar{
+    background-color:#ffffff !important;
+    border:1px #999999 !important;
+    border-bottom:0px !important;
+}
+
+.title-editor{
+    min-height: 20px;
+    background-color: #f5f5f5;
+    border: 1px solid #e3e3e3;
+    border-radius: 3px;
+}
+
+.description-savecancel-buttons{
+    margin-top:10px;
+}
+
+.description-save{
+    border-radius:1px;
+}
+
+.description-cancel{
+    color:#999999;
+}
+
+.title-savecancel-buttons{
+    margin-top:10px;
+}
+
+.title-save{
+    border-radius:1px;
+}
+
+.title-cancel{
+    color:#999999;
+}
+
+.btn-sm{
+    border-radius:1px !important;
+}
+
+
+.modal-card-info{
+    margin-bottom:10px;
+    font-size:14px;
+    font-weight:400 !important;
+    -webkit-font-smoothing: antialiased !important;
+    font-family:'Helvetica Neue' !important;
+    display:block;
+}
+
+.modal-card-tags{
+    margin-bottom:10px;
 
 }
 
-.placard.showing{
-    background:#D6E1C7 !important;
+.label{
+    border-radius: 1px;
+    font-size:18px;
+    font-weight:300 !important;
+    -webkit-font-smoothing: antialiased !important;
+    font-family:'Helvetica Neue' !important;
 }
 
-.fuelux .placard.showing textarea.placard-field{
-    background:#D6E1C7 !important;
+.btn{
+    border-radius: 1px !important;
 }
 
 .card-detail-modal .modal-body .options{
@@ -288,19 +347,4 @@ body{
 .groupcard{
     float:left;
     margin-right:10px;
-}
-
-textarea:hover{
-    background:#D6E1C7 !important;
-}
-
-.fuelux .placard-footer{
-    text-align:left !important;
-}
-
-.placard-accept{
-    background:#94C7B6;
-    color:#403B33;
-    border:0px;
-    border-radius: 1px;
 }
