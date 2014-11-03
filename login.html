@@ -1,35 +1,83 @@
+
 <!DOCTYPE html>
-
-<html ng-app="mainApp">
-
+<html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <title>Pimba!</title>
-    <script>document.write('<base href="' + document.location + '" />');</script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="css/login.css" />
-    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.4/angular.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.16/angular-resource.min.js"></script>
-    <script src="js/app.js"></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Pimba! Login</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/login.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
 </head>
 
 <body>
 
-<div class="container">
+<div class="site-wrapper">
+    <div class="site-wrapper-inner">
+        <div class="cover-container">
 
-    <form class="form-signin" role="form">
-        <h2 class="form-signin-heading">Sign in</h2>
-        <input ng-model="username" type="text" class="form-control" placeholder="Username" required autofocus>
-        <input ng-model="password" name="password" type="password" class="form-control" placeholder="Password" required>
-        <label class="checkbox">
-            <input type="checkbox" value="remember-me"> Remember me
-        </label>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-    </form>
+            <div class="inner cover">
+                <h1 class="cover-heading">Pimba!</h1>
 
-</div> <!-- /container -->
 
+                <div class="row">
+                <div class="col-md-4 col-md-offset-4">
+                <form role="form">
+                    <div class="form-group">
+
+                        <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email">
+                    </div>
+                    <div class="form-group">
+
+                        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                    </div>
+
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox"> Remember me
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-lg btn-default">Login</button>
+                </form>
+
+                </div>
+                </div>
+
+
+            </div>
+
+            <div class="mastfoot">
+                <div class="inner">
+                    <p>Pimba! Prototype 1 (FAP) 2014</p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -134,6 +134,14 @@ h2{
     box-shadow: 1px 1px 1px #AAAAAA;
 }
 
+.card:hover{
+    background-color:#dddddd;
+}
+
+.editicon{
+
+}
+
 .card .title{
     -webkit-font-smoothing: antialiased;
     color: #403B33;
