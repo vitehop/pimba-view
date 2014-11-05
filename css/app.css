@@ -59,10 +59,30 @@ textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
     margin-top: 0;
 }
 
+.logout-button{
+    color:#EDEBE6;
+    line-height:50px !important;
+    font-size:18px;
+    -webkit-font-smoothing: antialiased;
+    font-family:'Helvetica Neue';
+    text-decoration:none;
+    margin:0px;
+    margin-right:20px;
+    padding:0px;
+    font-weight:500;
+
+}
+
+.logout-button a{
+    font-weight:300;
+    color:#EDEBE6;
+    font-size:18px;
+}
+
 .perspectives-button{
     color:#EDEBE6;
     line-height:50px !important;
-    font-size:20px;
+    font-size:18px;
     font-weight:300;
     -webkit-font-smoothing: antialiased;
     font-family:'Helvetica Neue';
