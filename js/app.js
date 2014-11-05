@@ -1,4 +1,32 @@
+// No localStorage.token? please, go and login
+
+if(!localStorage.token){
+    window.location.href ="login.html";
+}
+
+
+var apiserver = "http://localhost:8080";
+
+
 $(document).ready(function(){
+
+
+    // Logout bind
+    $('#logoutBtn').on('click',function() {
+        localStorage.removeItem("token");
+        window.location.href="login.html";
+    });
+
+
+    // ***************
+    // EDIT WINDOW JS
+    // ***************
+    //
+    // 0 - Hide savecancel buttons
+    // 1 - Show edit controls when clicking on the description field (and "cancel" button control)
+    // 2 - Show edit controls when clicking on the title field (and "cancel" button control)
+
+
 
     $('.description-savecancel-buttons').hide();
     $('.title-savecancel-buttons').hide();
@@ -27,12 +55,16 @@ $(document).ready(function(){
 
         $('.description-savecancel-buttons').show();
 
+        // Cancel button control
+
         $('.description-cancel').on('click',function(){
 
             $('#modal-description').code(previousText);
             $('#modal-description').destroy();
             $('.description-savecancel-buttons').hide();
         });
+
+        // Save button control
 
         $('.description-save').on('click',function(){
 
@@ -53,6 +85,8 @@ $(document).ready(function(){
 
         $('.title-savecancel-buttons').show();
 
+        // Cancel button control
+
         $('.title-cancel').on('click',function(){
 
             $('#modal-title').html(previousText);
@@ -61,6 +95,8 @@ $(document).ready(function(){
             $('#modal-title').removeClass('title-editor');
 
         });
+
+        // Save button control
 
         $('.title-save').on('click',function(){
 
