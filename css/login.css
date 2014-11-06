@@ -128,3 +128,11 @@ h1{
     font-weight:300;
     font-size: 60px;
 }
+
+.loginFailed{
+    font-family: 'Helvetica Neue';
+    font-weight:300;
+    font-size: 16px;
+    line-height: 50px;
+    color: #b94a48;
+}

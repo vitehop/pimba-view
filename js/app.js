@@ -1,41 +1,111 @@
-// No localStorage.token? please, go and login
-
-if(!localStorage.token){
+// Wait a sec... no token? please, go and login!
+if(!localStorage.token && !sessionStorage.token){
     window.location.href ="login.html";
 }
+else{
+    var token = (localStorage.token || sessionStorage.token);
+}
 
+/*
+ FUNCIONAMIENTO BÁSICO DE KNOCKOUT.JS
+
+MODELS: Estructuras que guardan los datos a mostrar.
+        Estas estructuras luego se utilizan directamente en el HTML para pintar los datos que contienen.
+        Al definir sus elementos como observables, cualquier cambio que hagamos a esta estructura desde JS se
+        reflejará automáticamente en todos los elementos del HTML que estén utilizando el model.
+        Después de definir el model, el método ko.applyBindings permite "tener disponible" este model para usar
+        en un nodo del DOM en concreto.
+  */
+
+
+
+// JS MODELS
+
+var userModel = {
+    username: ko.observable(),
+    password: ko.observable(),
+    perspectives: ko.observableArray([])
+};
+
+ko.applyBindings(userModel,$('#mainnavbar')[0]);
+
+
+
+
+
+
+
+// General config
 
 var apiserver = "http://localhost:8080";
 
 
 $(document).ready(function(){
 
+    // ***************
+    // PERSPECTIVE VIEW JS
+    // ***************
+    // JS Code for the main app view
 
-    // Logout bind
+
+    // Loading header items: user info & perspectives
+    // ***************
+
+    $.ajax({
+        type: 'GET',
+        url: apiserver + "/api/users",
+        dataType: 'json',
+        beforeSend: function(request){ request.setRequestHeader('Authorization', 'Bearer '+token);},
+        success: function(response) {
+
+            // Setting user properties into the KO userModel
+            userModel.username(response.username);
+            userModel.password(response.password);
+            userModel.perspectives(response.perspectives);
+
+        },
+        error: function(response) {
+            window.location.href='login.html';
+        }
+    });
+
+
+    // Bind for clicking on the LOGOUT link
+    // ***************
+
     $('#logoutBtn').on('click',function() {
         localStorage.removeItem("token");
+        sessionStorage.removeItem("token");
         window.location.href="login.html";
+
+
     });
+
+
+
+
+
+
+
+
+
 
 
     // ***************
     // EDIT WINDOW JS
     // ***************
-    //
-    // 0 - Hide savecancel buttons
-    // 1 - Show edit controls when clicking on the description field (and "cancel" button control)
-    // 2 - Show edit controls when clicking on the title field (and "cancel" button control)
+    // JS Code for the edit window
 
+    // Initial config
 
-
+    // Hide savecancel buttons so they don't appear initially
     $('.description-savecancel-buttons').hide();
     $('.title-savecancel-buttons').hide();
 
-    // *****************
-    // EDIT WINDOW BINDS
-    // *****************
 
-    // Show edit controls when clicking on the description field
+
+    // Bind for clicking on the description area
+    // ***************
 
     $('#modal-description').on('click',function(){
 
@@ -55,7 +125,8 @@ $(document).ready(function(){
 
         $('.description-savecancel-buttons').show();
 
-        // Cancel button control
+        // Bind for clicking on cancel button when editing the description
+        // ***************
 
         $('.description-cancel').on('click',function(){
 
@@ -64,7 +135,8 @@ $(document).ready(function(){
             $('.description-savecancel-buttons').hide();
         });
 
-        // Save button control
+        // Bind for clicking on save button when editing the description
+        // ***************
 
         $('.description-save').on('click',function(){
 
@@ -74,7 +146,8 @@ $(document).ready(function(){
 
     });
 
-    // Show edit controls when clicking on the title field
+    // Bind for clicking on the title area
+    // ***************
 
     $('#modal-title').on('click',function(){
 
@@ -85,7 +158,8 @@ $(document).ready(function(){
 
         $('.title-savecancel-buttons').show();
 
-        // Cancel button control
+        // Bind for clicking on cancel button when editing the title
+        // ***************
 
         $('.title-cancel').on('click',function(){
 
@@ -96,7 +170,8 @@ $(document).ready(function(){
 
         });
 
-        // Save button control
+        // Bind for clicking on save button when editing the title
+        // ***************
 
         $('.title-save').on('click',function(){
 

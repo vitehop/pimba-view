@@ -93,14 +93,13 @@ textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
 
 .perspectives-button:hover{
     color:#EDEBE6 !important;
-    text-decoration:none !important;
-    opacity:0.3;
+    text-decoration: none !important;
+    cursor:pointer;
 }
 
 .perspectives-button:active{
     color:#EDEBE6 !important;
-    text-decoration:none !important;
-    opacity:0.3;
+    text-decoration: none !important;
 }
 
 .new-perspective{
@@ -165,7 +164,7 @@ h2{
 .card .title{
     -webkit-font-smoothing: antialiased;
     color: #403B33;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 400;
     font-family: "Helvetica Neue";
     padding:7px;
