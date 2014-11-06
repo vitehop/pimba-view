@@ -32,31 +32,31 @@ FIXED-TOP MAIN HEADER
 
     <div class="dropdown">
 
-            <ul class="navbar-nav">
-                <li>
-                    <p class="perspectives-button" data-toggle="dropdown" href="#">
-                        My perspectives
-                        <span class="caret"></span>
-                    </p>
-                    <div class="dropdown-menu pers-dropdown-menu list-group" role="menu" aria-labelledby="dLabel">
+        <ul class="navbar-nav">
+            <li>
+                <p class="perspectives-button" data-toggle="dropdown" href="#">
+                    My perspectives
+                    <span class="caret"></span>
+                </p>
+                <div class="dropdown-menu pers-dropdown-menu list-group" role="menu" aria-labelledby="dLabel">
 
-                        <div class="new-perspective">
-                            <button type="button" class="btn btn-default btn-block">Create new perspective</button>
-                        </div>
+                    <div class="new-perspective">
+                        <button type="button" class="btn btn-default btn-block">Create new perspective</button>
+                    </div>
 
-                        <div data-bind="foreach: perspectives">
+                    <div data-bind="foreach: perspectives">
 
-                            <a href="#" class="list-group-item">
-                                <h5 data-bind="text: title" class="list-group-item-heading"></h5>
-                            </a>
-
-                        </div>
+                        <a href="#" class="list-group-item">
+                            <h5 data-bind="text: title" class="list-group-item-heading"></h5>
+                        </a>
 
                     </div>
-                </li>
-            </ul>
 
-        </div>
+                </div>
+            </li>
+        </ul>
+
+    </div>
 
 
     <!-- USER INFO & OPTIONS -->
