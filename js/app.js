@@ -6,32 +6,6 @@ else{
     var token = (localStorage.token || sessionStorage.token);
 }
 
-/*
- FUNCIONAMIENTO BÁSICO DE KNOCKOUT.JS
-
-MODELS: Estructuras que guardan los datos a mostrar.
-        Estas estructuras luego se utilizan directamente en el HTML para pintar los datos que contienen.
-        Al definir sus elementos como observables, cualquier cambio que hagamos a esta estructura desde JS se
-        reflejará automáticamente en todos los elementos del HTML que estén utilizando el model.
-        Después de definir el model, el método ko.applyBindings permite "tener disponible" este model para usar
-        en un nodo del DOM en concreto.
-  */
-
-
-
-// JS MODELS
-
-var userModel = {
-    username: ko.observable(),
-    password: ko.observable(),
-    perspectives: ko.observableArray([])
-};
-
-ko.applyBindings(userModel,$('#mainnavbar')[0]);
-
-
-
-
 
 
 
@@ -40,18 +14,51 @@ ko.applyBindings(userModel,$('#mainnavbar')[0]);
 var apiserver = "http://localhost:8080";
 
 
-$(document).ready(function(){
+// ***************
+// MODELS
+// ***************
 
-    // ***************
-    // PERSPECTIVE VIEW JS
-    // ***************
-    // JS Code for the main app view
+var userModel = {
+    username: ko.observable(),
+    password: ko.observable(),
+    perspectives: ko.observableArray([])
+};
+
+var currentPerspective;
+
+ko.applyBindings(userModel,$('#mainnavbar')[0]);
 
 
-    // Loading header items: user info & perspectives
-    // ***************
 
-    $.ajax({
+// ****************
+// API CALLS
+// ****************
+
+
+function getPerspective(id_perspective){
+
+     return $.ajax({
+        type: 'GET',
+        url: apiserver + "/api/perspectives/"+id_perspective,
+        dataType: 'json',
+        beforeSend: function(request){ request.setRequestHeader('Authorization', 'Bearer '+token);},
+        success: function(response) {
+
+            // Setting user properties into the KO perspectiveModel
+            currentPerspective=response;
+
+
+        },
+        error: function(response) {
+            console.log(response);
+        }
+    });
+
+}
+
+function getUser(user){
+
+    return $.ajax({
         type: 'GET',
         url: apiserver + "/api/users",
         dataType: 'json',
@@ -59,40 +66,107 @@ $(document).ready(function(){
         success: function(response) {
 
             // Setting user properties into the KO userModel
-            userModel.username(response.username);
-            userModel.password(response.password);
-            userModel.perspectives(response.perspectives);
+
+            user.username(response.username);
+            user.password(response.password);
+            user.perspectives(response.perspectives);
 
         },
         error: function(response) {
+            console.log(response);
             window.location.href='login.html';
         }
     });
 
+}
 
-    // Bind for clicking on the LOGOUT link
+
+
+
+$(document).ready(function(){
+
+    /* Bootup */
+
+
+    /* BISOR init */
+
+    aOptions = {
+        showSelectorCards: true,
+        depthTemplates: {
+            0: { file: 'pimba-bisor/templates/default-card.html', id:'bisor-template-default'},
+            1: { file: 'pimba-bisor/templates/small-card.html',   id:'bisor-template-small'},
+            2: { file: 'pimba-bisor/templates/big-card.html',     id:'bisor-template-big'}
+        }
+
+    };
+    var pimbaBisor = new PimbaBisor(aOptions);
+
+
+    getUser(userModel).done(function(){
+
+        // De momento cojo a mano la primera perspectiva [0] del user logado
+        getPerspective(userModel.perspectives()[0]._id).done(function(){
+
+           console.log(currentPerspective);
+           pimbaBisor.setJSONDataWidgets(currentPerspective);
+
+
+
+        }).fail(function(){
+            console.log("Error loading default user perspective");
+        });
+
+    }).fail(function() {
+        console.log("Error loading user data");
+    });
+
+
+
+
     // ***************
+    // HEADER BINDINGS
+    // ***************
+
+        // Bind for clicking on the CREATE NEW PERSPECTIVE link
+        // ***************
+
+    $('#newPerspective').on('click',function(){
+        $('#editModal').modal(); // show empty modal window
+        $('#modal-title').trigger("click"); // triggers click on the title so the user can edit directly
+    })
+
+        // Bind for clicking on the LOGOUT link
+        // ***************
 
     $('#logoutBtn').on('click',function() {
         localStorage.removeItem("token");
         sessionStorage.removeItem("token");
         window.location.href="login.html";
-
-
     });
 
 
+    // ***************
+    // CARD BUTTONS
+    // ***************
 
+        // Binds for showing/hidding button bar when mouseover/mouseout
+        // ***************
 
+    $(".card").hover(
 
+        function() {
+            $(this).find(".button-list").show();
+        }, function() {
+            $(this).find(".button-list").hide();
+        }
 
-
+    );
 
 
 
 
     // ***************
-    // EDIT WINDOW JS
+    // EDIT POPUP VIEW BINDINGS
     // ***************
     // JS Code for the edit window
 
@@ -154,9 +228,19 @@ $(document).ready(function(){
         var previousText = $('#modal-title').code();
 
         $('#modal-title').attr('contenteditable','true');
-        $('#modal-title').addClass('title-editor');
-
+        $('#modal-title').addClass('title-editing');
         $('.title-savecancel-buttons').show();
+        $('#modal-title').focus();
+
+        // little code block to automatically select the whole text into the contentEditable element
+        var range = document.createRange();
+        console.log(range);
+        range.selectNodeContents(document.getElementById("modal-title"));
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+
+
 
         // Bind for clicking on cancel button when editing the title
         // ***************
@@ -166,9 +250,11 @@ $(document).ready(function(){
             $('#modal-title').html(previousText);
             $('#modal-title').attr('contenteditable','false');
             $('.title-savecancel-buttons').hide();
-            $('#modal-title').removeClass('title-editor');
+            $('#modal-title').removeClass('title-editing');
 
         });
+
+
 
         // Bind for clicking on save button when editing the title
         // ***************
@@ -177,7 +263,7 @@ $(document).ready(function(){
 
             $('#modal-title').attr('contenteditable','false');
             $('.title-savecancel-buttons').hide();
-            $('#modal-title').removeClass('title-editor');
+            $('#modal-title').removeClass('title-editing');
 
         });
 
@@ -187,6 +273,7 @@ $(document).ready(function(){
 
 
 });
+
 
 
 
