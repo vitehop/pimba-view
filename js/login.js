@@ -1,13 +1,6 @@
-alert("OJO: He cambiado la IP de apiserver");
-var apiserver = "http://93.156.32.134:8080";
-
-
 $(document).ready(function() {
-
     /* Hiding login error message */
-     $('.loginFailed').hide();
-
-
+    $('.loginFailed').hide();
 
     /*
      * Ejemplo básico Ajax para logeo en la API Pimba.
@@ -17,22 +10,19 @@ $(document).ready(function() {
      * En este caso el token se elimina al cerrar la pestaña del navegador
      **/
 
-    $('#loginBtn').on('click', function () {
-
-        var username = $('#inputEmail').val();
-        var password = $('#inputPassword').val();
+    $( "#login-form" ).submit(function( event ) {
+        event.preventDefault();
 
         $.ajax({
-            type: 'POST',
-            url: apiserver + "/api/login",
-            data: { 'username': username, 'password': password },
+            url     : $(this).attr('action'),
+            type    : $(this).attr('method'),
+            data    : $( "#login-form").serialize(),
             dataType: 'json',
             success: function (response) {
                 if ($("#rememberMe").is(':checked')){
                     localStorage.setItem("token", response.token);
                     window.location.href="app.html";
-                }
-                else{
+                } else {
                     sessionStorage.setItem("token",response.token);
                     window.location.href="app.html";
                 }
@@ -41,11 +31,5 @@ $(document).ready(function() {
                 $('.loginFailed').show();
             }
         });
-
     });
-
-
-
-
-
 });

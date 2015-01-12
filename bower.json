@@ -1,0 +1,24 @@
+{
+  "name": "pimba-view",
+  "version": "0.0.1",
+  "homepage": "https://github.com/vitehop/pimba-view",
+  "description": "Dependencias de pimba-view",
+  "moduleType": [
+    "globals"
+  ],
+  "authors": [
+    "rzeronte"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "pimba-apiserver": "vitehop/pimba-apiserver",
+    "pimba-bisor": "rzeronte/pimba-bisor"
+  }
+}
