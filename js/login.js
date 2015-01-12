@@ -1,5 +1,5 @@
-
-var apiserver = "http://localhost:8080";
+alert("OJO: He cambiado la IP de apiserver");
+var apiserver = "http://93.156.32.134:8080";
 
 
 $(document).ready(function() {
@@ -36,7 +36,6 @@ $(document).ready(function() {
                     sessionStorage.setItem("token",response.token);
                     window.location.href="app.html";
                 }
-
             },
             error: function () {
                 $('.loginFailed').show();

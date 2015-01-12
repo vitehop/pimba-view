@@ -27,16 +27,16 @@ var PimbaBisor = function (aOptions) {
     /*Template para el widget, si no se definen se usan por defecto */
     if (typeof(aOptions['depthTemplates']) == 'undefined') {
         this.depthTemplates = {
-                0: { file: '../pimba-bisor/templates/default-card.html', id:'bisor-template-default'},
-                1: { file: '../pimba-bisor/templates/small-card.html',   id:'bisor-template-small'},
-                2: { file: '../pimba-bisor/templates/big-card.html',     id:'bisor-template-big'}
+                0: { file: 'templates/default-card.html', id:'bisor-template-default'},
+                1: { file: 'templates/small-card.html',   id:'bisor-template-small'},
+                2: { file: 'templates/big-card.html',     id:'bisor-template-big'}
         };
     } else {
         this.depthTemplates            = aOptions['depthTemplates'];
     }
     
     /* El template para el formulario es siempre el mismo, no customizable */
-    this.dialogFormTemplateFile        = "../pimba-bisor/templates/dialog-form.html";
+    this.dialogFormTemplateFile        = "pimba-bisor/templates/dialog-form.html";
 
     this.constructor = function(aOptions) {
         console.log('[Bisor]constructor')
@@ -131,7 +131,7 @@ var PimbaBisor = function (aOptions) {
         // Template para el dialog y el formulario de edición
         $.ajax({
             type: 'GET',
-            url: self.dialogFormTemplateFile,
+            url: 'bower_components/pimba-bisor/' + self.dialogFormTemplateFile,
             success: function(data) {
                 $(".rze_container").after(data);
             },error: function(){ console.log("Error loadTemplateWidget[dialogFormTemplate]");  }
@@ -186,7 +186,7 @@ var PimbaBisor = function (aOptions) {
         for (var i in self.depthTemplates) {
             $.ajax({
                 type: 'GET',
-                url: self.depthTemplates[i]['file'],
+                url: 'bower_components/pimba-bisor/' + self.depthTemplates[i]['file'],
                 success: function(data) {
                     $(".rze_container").after(data);
                 },error: function(){ console.log("Error loadTemplateWidget[depthTemplates]");  }
@@ -407,7 +407,7 @@ var PimbaBisor = function (aOptions) {
             obj.appendTo("#" + widgetData['parent'] + "> .childs");
         }
 
-        $(obj).resizable();
+        //$(obj).resizable();
 
         $(obj).draggable({
             snap       : ".containerDev",
