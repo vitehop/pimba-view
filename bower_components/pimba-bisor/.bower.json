@@ -1,0 +1,14 @@
+{
+  "name": "pimba-bisor",
+  "homepage": "https://github.com/rzeronte/pimba-bisor",
+  "_release": "a1217a0fbb",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "a1217a0fbbeb6046c22be659194a60fdc3483d4a"
+  },
+  "_source": "git://github.com/rzeronte/pimba-bisor.git",
+  "_target": "*",
+  "_originalSource": "rzeronte/pimba-bisor",
+  "_direct": true
+}
