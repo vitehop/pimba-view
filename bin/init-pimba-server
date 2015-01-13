@@ -1,0 +1,9 @@
+#!/bin/bash
+# Inicialización del servidor de Pimba
+
+if node --version >/dev/null 2>&1; then
+    echo "Init Pimba RESTFull"
+    node ./bower_components/pimba-apiserver/server.js > ./log/server.log &
+else
+    echo "[Error] You must have installed nodejs in your system"
+fi
