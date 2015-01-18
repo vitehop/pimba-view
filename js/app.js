@@ -14,8 +14,10 @@ else{
 var apiserver = "http://localhost:8080";
 
 
+
+
 // ***************
-// MODELS
+// KNOCKOUT MODELS
 // ***************
 
 var userModel = {
@@ -29,58 +31,35 @@ var currentPerspective;
 ko.applyBindings(userModel,$('#mainnavbar')[0]);
 
 
+/* BISOR init */
 
-// ****************
-// API CALLS
-// ****************
+aOptions = {
+    showSelectorCards: false,
+    depthTemplates: {
+        0: { file: 'pimba-bisor/templates/default-card.html', id:'bisor-template-default'},
+        1: { file: 'pimba-bisor/templates/small-card.html',   id:'bisor-template-small'},
+        2: { file: 'pimba-bisor/templates/big-card.html',     id:'bisor-template-big'}
+    }
 
-
-function getPerspective(id_perspective){
-
-     return $.ajax({
-        type: 'GET',
-        url: apiserver + "/api/perspectives/"+id_perspective,
-        dataType: 'json',
-        beforeSend: function(request){ request.setRequestHeader('Authorization', 'Bearer '+token);},
-        success: function(response) {
-
-            // Setting user properties into the KO perspectiveModel
-            currentPerspective=response;
+};
+var pimbaBisor = new PimbaBisor(aOptions);
 
 
-        },
-        error: function(response) {
-            console.log(response);
-        }
+// *********************
+// KNOCKOUT CLICK BINDS
+// *********************
+
+
+function loadPerspective(data){
+
+    getPerspective(data._id).done(function () {
+
+        console.log("Loading perspective:");
+        console.log(currentPerspective);
+        pimbaBisor.clearDashboard();
+        pimbaBisor.setJSONDataWidgets(currentPerspective);
     });
-
 }
-
-function getUser(user){
-
-    return $.ajax({
-        type: 'GET',
-        url: apiserver + "/api/users",
-        dataType: 'json',
-        beforeSend: function(request){ request.setRequestHeader('Authorization', 'Bearer '+token);},
-        success: function(response) {
-
-            // Setting user properties into the KO userModel
-
-            user.username(response.username);
-            user.password(response.password);
-            user.perspectives(response.perspectives);
-
-        },
-        error: function(response) {
-            console.log(response);
-            window.location.href='../index.html';
-        }
-    });
-
-}
-
-
 
 
 $(document).ready(function(){
@@ -88,28 +67,12 @@ $(document).ready(function(){
     /* Bootup */
 
 
-    /* BISOR init */
-
-    aOptions = {
-        showSelectorCards: true,
-        depthTemplates: {
-            0: { file: 'pimba-bisor/templates/default-card.html', id:'bisor-template-default'},
-            1: { file: 'pimba-bisor/templates/small-card.html',   id:'bisor-template-small'},
-            2: { file: 'pimba-bisor/templates/big-card.html',     id:'bisor-template-big'}
-        }
-
-    };
-    var pimbaBisor = new PimbaBisor(aOptions);
-
-
+    // Load first perspective into pimba-bisor
     getUser(userModel).done(function(){
 
-        // De momento cojo a mano la primera perspectiva [0] del user logado
         getPerspective(userModel.perspectives()[0]._id).done(function(){
 
-           console.log(currentPerspective);
            pimbaBisor.setJSONDataWidgets(currentPerspective);
-
 
 
         }).fail(function(){
@@ -126,6 +89,7 @@ $(document).ready(function(){
     // ***************
     // HEADER BINDINGS
     // ***************
+
 
         // Bind for clicking on the CREATE NEW PERSPECTIVE link
         // ***************
@@ -275,5 +239,56 @@ $(document).ready(function(){
 });
 
 
+
+
+
+// ****************
+// API CALLS
+// ****************
+
+
+function getPerspective(id_perspective){
+
+    return $.ajax({
+        type: 'GET',
+        url: apiserver + "/api/perspectives/"+id_perspective,
+        dataType: 'json',
+        beforeSend: function(request){ request.setRequestHeader('Authorization', 'Bearer '+token);},
+        success: function(response) {
+
+            // Setting user properties into the KO perspectiveModel
+            currentPerspective=response;
+
+        },
+        error: function(response) {
+            console.log(response);
+        }
+    });
+
+}
+
+function getUser(user){
+
+    return $.ajax({
+        type: 'GET',
+        url: apiserver + "/api/users",
+        dataType: 'json',
+        beforeSend: function(request){ request.setRequestHeader('Authorization', 'Bearer '+token);},
+        success: function(response) {
+
+            // Setting user properties into the KO userModel
+
+            user.username(response.username);
+            user.password(response.password);
+            user.perspectives(response.perspectives);
+
+        },
+        error: function(response) {
+            console.log(response);
+            window.location.href='../index.html';
+        }
+    });
+
+}
 
 
