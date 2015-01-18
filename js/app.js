@@ -56,8 +56,8 @@ function loadPerspective(data){
 
         console.log("Loading perspective:");
         console.log(currentPerspective);
-        pimbaBisor.clearDashboard();
         pimbaBisor.setJSONDataWidgets(currentPerspective);
+        pimbaBisor.go();
     });
 }
 
@@ -73,6 +73,7 @@ $(document).ready(function(){
         getPerspective(userModel.perspectives()[0]._id).done(function(){
 
            pimbaBisor.setJSONDataWidgets(currentPerspective);
+            pimbaBisor.go();
 
 
         }).fail(function(){
