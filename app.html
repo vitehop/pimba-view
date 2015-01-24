@@ -110,7 +110,7 @@ EDIT/VIEW MODAL WINDOW
             <div class="modal-header">
                 <div class="row">
                     <div class="col-md-11">
-                        <div id="modal-title">
+                        <div id="modal-title" data-bind="text: title">
                             Type card title...
                         </div>
                         <div class="title-savecancel-buttons">
@@ -140,7 +140,7 @@ EDIT/VIEW MODAL WINDOW
 
                         <div class="modal-card-info"></div>
 
-                        <div id="modal-description">
+                        <div id="modal-description" data-bind="text: description">
                             Type card description...
                         </div>
 
@@ -154,8 +154,10 @@ EDIT/VIEW MODAL WINDOW
 
                     <div class="col-md-3 options">
 
-                            <button type="button" class="modal-buttons btn btn-default btn-block">Go into</button>
-                            <button type="button" class="btn btn-default btn-block">Delete card</button>
+                           <!-- <button type="button" class="modal-buttons btn btn-default btn-block">Go into</button> -->
+                            <button type="button" class="deletecard btn btn-default btn-block">Delete card</button>
+
+
 
                     </div>
 
