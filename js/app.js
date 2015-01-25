@@ -26,7 +26,8 @@ var cardModel = {
     parent: ko.observable(),
     user: ko.observable(),
     childs: ko.observableArray([]),
-    id: ko.observable()
+    id: ko.observable(),
+    isNewCard: ko.observable()
 }
 
 ko.applyBindings(cardModel,$('#editModal')[0]);
@@ -53,7 +54,8 @@ var perspectiveModel = {
 aOptions = {
     showSelectorCards: false,
     actions: [
-        { class: 'editCardButton glyphicon glyphicon-pencil action'}
+        { class: 'editCardButton glyphicon glyphicon-pencil action' },
+        { class: 'newCardButton glyphicon glyphicon-plus action' }
     ],
     depthTemplates: {
         0: { file: 'pimba-bisor/templates/default-card.html', id:'bisor-template-default'},
@@ -132,7 +134,7 @@ $(document).ready(function(){
     // CARD BUTTONS
     // ***************
 
-    // Click sobre la clase .editCardButton
+    // Click sobre la acción de editar .editCardButton
     $("body").on('click', '.editCardButton', function() {
 
         var widgetId = $(this).closest('.rze_widget').attr("id");
@@ -143,6 +145,24 @@ $(document).ready(function(){
         getCard(cardModel,widgetId).done(function(){
             console.log("Card "+cardModel.id()+" load success");
         });
+
+    });
+
+
+    // Click sobre la acción de nueva tarjeta .newCardButton
+    $("body").on('click', '.newCardButton', function() {
+
+        var widgetId = $(this).closest('.rze_widget').attr("id");
+
+        // Preparo el cardModel para la nueva tarjeta
+        cardModel.title("Enter title...");
+        cardModel.description("Enter description...");
+        cardModel.parent(widgetId);
+        cardModel.user(userModel.id);
+        cardModel.childs([]);
+        cardModel.isNewCard(true);
+
+        $('#editModal').modal(); // show modal window
 
     });
 
@@ -167,7 +187,7 @@ $(document).ready(function(){
 
     // Bind for deleting the card
     // ******************
-/*
+
     $('.deletecard').on('click',function(){
 
         deleteCard(cardModel).done(function(){
@@ -181,14 +201,16 @@ $(document).ready(function(){
                 pimbaBisor.go();
 
                 // Cerramos la ventana modal ya que hemos borrado la tarjeta
-                // TODO
+                $('#editModal').modal('hide');
+
+
             });
 
 
         });
 
     });
-*/
+
 
 
 
@@ -233,16 +255,38 @@ $(document).ready(function(){
             $('.description-savecancel-buttons').hide();
 
             cardModel.description($('#modal-description').code());
-            updateCard(cardModel).done(function(){
 
-                // Una vez la card está actualizada, repinto la perspectiva
-                getPerspective(perspectiveModel.card_id()).done(function () {
+            // Si es tarjeta nueva, la creamos
+            if (cardModel.isNewCard()) {
 
-                    pimbaBisor.setJSONDataWidgets(perspectiveModel.currentPerspective());
-                    pimbaBisor.go();
+                createCard(cardModel).done(function(){
+
+                    getPerspective(perspectiveModel.card_id()).done(function(){
+
+                        pimbaBisor.setJSONDataWidgets(perspectiveModel.currentPerspective());
+                        pimbaBisor.go();
+                    });
+                    console.log("New card added");
+
                 });
-                console.log("Description updated with the new desc: " +cardModel.description());
-            });
+            }
+
+            // Si no es tarjeta nueva, la editamos
+            else {
+
+                updateCard(cardModel).done(function(){
+
+                    // Una vez la card está actualizada, repinto la perspectiva
+                    getPerspective(perspectiveModel.card_id()).done(function () {
+
+                        pimbaBisor.setJSONDataWidgets(perspectiveModel.currentPerspective());
+                        pimbaBisor.go();
+                    });
+                    console.log("Description updated with the new desc: " +cardModel.description());
+                });
+
+            }
+
 
 
 
@@ -264,7 +308,6 @@ $(document).ready(function(){
 
         // little code block to automatically select the whole text into the contentEditable element
         var range = document.createRange();
-        console.log(range);
         range.selectNodeContents(document.getElementById("modal-title"));
         var sel = window.getSelection();
         sel.removeAllRanges();
@@ -296,16 +339,40 @@ $(document).ready(function(){
             $('#modal-title').removeClass('title-editing');
 
             cardModel.title($('#modal-title').code());
-            updateCard(cardModel).done(function(){
 
-               // Una vez la card está actualizada, repinto la perspectiva
-                getPerspective(perspectiveModel.card_id()).done(function () {
+            // Si la tarjeta es nueva, la creamos
+            if(cardModel.isNewCard()){
 
-                    pimbaBisor.setJSONDataWidgets(perspectiveModel.currentPerspective());
-                    pimbaBisor.go();
+                createCard(cardModel).done(function(){
+
+                    // Una vez la card está guardada, repinto la perspectiva
+                    getPerspective(perspectiveModel.card_id()).done(function () {
+
+                        pimbaBisor.setJSONDataWidgets(perspectiveModel.currentPerspective());
+                        pimbaBisor.go();
+                    });
+                    console.log("Card saved with the new title: " +cardModel.title());
+
                 });
-               console.log("Card updated with the new title: " +cardModel.title());
-            });
+            }
+
+            // Si no es la tarjeta nueva, la editamos
+            else {
+
+                updateCard(cardModel).done(function(){
+
+                    // Una vez la card está actualizada, repinto la perspectiva
+                    getPerspective(perspectiveModel.card_id()).done(function () {
+
+                        pimbaBisor.setJSONDataWidgets(perspectiveModel.currentPerspective());
+                        pimbaBisor.go();
+                    });
+                    console.log("Card updated with the new title: " +cardModel.title());
+                });
+
+            }
+
+
 
 
         });
@@ -445,3 +512,34 @@ function deleteCard(card){
     });
 
 }
+
+
+function createCard(card){
+
+    return $.ajax({
+        type: 'POST',
+        data: {
+            title : card.title,
+            description : card.description,
+            parent : card.parent
+        },
+        url: apiserver + "/api/cards/",
+        dataType: 'json',
+        beforeSend: function(request){ request.setRequestHeader('Authorization', 'Bearer '+token);},
+        success: function(response) {
+
+            cardModel.id(response._id);
+            cardModel.user(response.user);
+            cardModel.childs(response.childs);
+            cardModel.parent(response.parent);
+            cardModel.isNewCard(false);
+
+        },
+        error: function(response) {
+            console.log(response);
+            window.location.href='../index.html';
+        }
+    });
+
+}
+
