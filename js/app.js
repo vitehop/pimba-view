@@ -116,8 +116,15 @@ $(document).ready(function(){
         // ***************
 
     $('#newPerspective').on('click',function(){
+
+        // Prepare the cardModel for the modal window
+        cardModel.title("Enter title...");
+        cardModel.description("Enter description...");
+        cardModel.user(userModel.id);
+        cardModel.isNewCard(true);
+
         $('#editModal').modal(); // show empty modal window
-        $('#modal-title').trigger("click"); // triggers click on the title so the user can edit directly
+        //$('#modal-title').trigger("click"); // triggers click on the title so the user can edit directly
     })
 
         // Bind for clicking on the LOGOUT link
@@ -165,6 +172,53 @@ $(document).ready(function(){
         $('#editModal').modal(); // show modal window
 
     });
+
+
+    // Click sobre el botón SAVE del TÍTULO .title-save
+    // ***************
+
+    $("body").on('click', '.title-save', function() {
+
+        $('#modal-title').attr('contenteditable','false');
+        $('.title-savecancel-buttons').hide();
+        $('#modal-title').removeClass('title-editing');
+
+        cardModel.title($('#modal-title').code());
+
+        // Si la tarjeta es nueva, la creamos
+        if(cardModel.isNewCard()){
+
+            createCard(cardModel).done(function(){
+
+                 // Una vez la card está guardada, repinto la perspectiva
+
+                 getPerspective(perspectiveModel.card_id()).done(function () {
+
+                     pimbaBisor.setJSONDataWidgets(perspectiveModel.currentPerspective());
+                     pimbaBisor.go();
+                 });
+
+            });
+
+        }
+
+        // Si no es la tarjeta nueva, la editamos
+        else {
+
+            updateCard(cardModel).done(function(){
+
+                // Una vez la card está actualizada, repinto la perspectiva
+                getPerspective(perspectiveModel.card_id()).done(function () {
+
+                    pimbaBisor.setJSONDataWidgets(perspectiveModel.currentPerspective());
+                    pimbaBisor.go();
+                });
+            });
+
+        }
+
+    });
+
 
 
 
@@ -258,6 +312,7 @@ $(document).ready(function(){
 
             // Si es tarjeta nueva, la creamos
             if (cardModel.isNewCard()) {
+                // Es tarjeta nueva
 
                 createCard(cardModel).done(function(){
 
@@ -286,9 +341,6 @@ $(document).ready(function(){
                 });
 
             }
-
-
-
 
         });
 
@@ -324,56 +376,6 @@ $(document).ready(function(){
             $('#modal-title').attr('contenteditable','false');
             $('.title-savecancel-buttons').hide();
             $('#modal-title').removeClass('title-editing');
-
-        });
-
-
-
-        // Bind for clicking on save button when editing the title
-        // ***************
-
-        $('.title-save').on('click',function(){
-
-            $('#modal-title').attr('contenteditable','false');
-            $('.title-savecancel-buttons').hide();
-            $('#modal-title').removeClass('title-editing');
-
-            cardModel.title($('#modal-title').code());
-
-            // Si la tarjeta es nueva, la creamos
-            if(cardModel.isNewCard()){
-
-                createCard(cardModel).done(function(){
-
-                    // Una vez la card está guardada, repinto la perspectiva
-                    getPerspective(perspectiveModel.card_id()).done(function () {
-
-                        pimbaBisor.setJSONDataWidgets(perspectiveModel.currentPerspective());
-                        pimbaBisor.go();
-                    });
-                    console.log("Card saved with the new title: " +cardModel.title());
-
-                });
-            }
-
-            // Si no es la tarjeta nueva, la editamos
-            else {
-
-                updateCard(cardModel).done(function(){
-
-                    // Una vez la card está actualizada, repinto la perspectiva
-                    getPerspective(perspectiveModel.card_id()).done(function () {
-
-                        pimbaBisor.setJSONDataWidgets(perspectiveModel.currentPerspective());
-                        pimbaBisor.go();
-                    });
-                    console.log("Card updated with the new title: " +cardModel.title());
-                });
-
-            }
-
-
-
 
         });
 
@@ -483,11 +485,12 @@ function updateCard(card){
         success: function(response) {
 
 
-            console.log(response);
+            console.log("[PUT /api/cards/] Id: "+card.id() + " Title: " + card.title());
         },
         error: function(response) {
             console.log(response);
-            window.location.href='../index.html';
+            console.log(card.childs());
+            //noty({text: 'Server crash :('});
         }
     });
 
@@ -507,7 +510,7 @@ function deleteCard(card){
         },
         error: function(response) {
             console.log(response);
-            window.location.href='../index.html';
+
         }
     });
 
@@ -528,18 +531,42 @@ function createCard(card){
         beforeSend: function(request){ request.setRequestHeader('Authorization', 'Bearer '+token);},
         success: function(response) {
 
-            cardModel.id(response._id);
-            cardModel.user(response.user);
-            cardModel.childs(response.childs);
-            cardModel.parent(response.parent);
-            cardModel.isNewCard(false);
+            // Estos datos sí estan en el response pero parece que no es la ruta adeucada
+
+
+            card.id(response._id);
+            card.user(response.user);
+            card.childs(response.childs);
+            card.parent(response.parent);
+            card.isNewCard(false);
+            console.log("[POST /api/cards/] Id: "+card.id() + " Title: " + card.title());
 
         },
         error: function(response) {
             console.log(response);
-            window.location.href='../index.html';
+
         }
     });
 
 }
 
+function savePerspective(card){
+
+    return $.ajax({
+        type: 'POST',
+        data: { card_id : card.id },
+        url: apiserver + "/api/perspectives",
+        dataType: 'json',
+        beforeSend: function(request){ request.setRequestHeader('Authorization', 'Bearer '+token);},
+        success: function(response) {
+
+            console.log("[POST /api/perspectives] Id: "+ card.id() + " Title: " + card.title());
+        },
+
+        error: function(response) {
+            console.log(response);
+
+        }
+
+    })
+}

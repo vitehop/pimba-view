@@ -1,11 +1,11 @@
 {
   "name": "pimba-apiserver",
   "homepage": "https://github.com/vitehop/pimba-apiserver",
-  "_release": "e2d01187e1",
+  "_release": "b5521edfde",
   "_resolution": {
     "type": "branch",
     "branch": "master",
-    "commit": "e2d01187e1a3484418314943fe873425cd5480ee"
+    "commit": "b5521edfde34a8e6d860e53c8323af67a9fc9111"
   },
   "_source": "git://github.com/vitehop/pimba-apiserver.git",
   "_target": "*",
