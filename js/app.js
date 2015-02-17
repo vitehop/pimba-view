@@ -58,9 +58,9 @@ aOptions = {
         { class: 'newCardButton glyphicon glyphicon-plus action' }
     ],
     depthTemplates: {
-        0: { file: 'pimba-bisor/templates/default-card.html', id:'bisor-template-default'},
-        1: { file: 'pimba-bisor/templates/small-card.html',   id:'bisor-template-small'},
-        2: { file: 'pimba-bisor/templates/big-card.html',     id:'bisor-template-big'}
+        0: { file: '../../bisor-templates/big-card.html', id:'bisor-template-big'},
+        1: { file: '../../bisor-templates/default-card.html', id:'bisor-template-default'},
+        2: { file: '../../bisor-templates/small-card.html', id:'bisor-template-small'}
     }
 
 };

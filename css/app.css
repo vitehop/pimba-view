@@ -30,7 +30,7 @@ a:hover{
 h2,h3{
     -webkit-font-smoothing: antialiased;
     color: #403B33;
-    font-size: 34px;
+    font-size: 30px;
     font-weight: 300;
     letter-spacing: -.01em;
     line-height: 1.3;
@@ -46,6 +46,8 @@ h2{
  * HEADER
  * Hide default bootstrap border to remove 1px line.
  */
+
+
 .navbar-fixed-top {
     border: 0;
 }
@@ -94,7 +96,6 @@ h2{
     background-color:#F5F5F5;
 }
 
-
 .perspective-item {
     width:200px;
     background-color:#FFFFFF;
@@ -125,8 +126,6 @@ h2{
 }
 
 
-
-
 /* **
  * USERNAME INFO & LOGOUT BUTTON (HEADER)
  ** */
@@ -153,66 +152,59 @@ h2{
 
 
 /* **
- * MAINCARD, GROUPCARDS & CARDS
+ * CARD TEMPLATES (& NO TEMPLATES...)
  ** */
 
-
-.maincard{
-    cursor:pointer;
+.rze_widget .content{
+    margin-left:0px !important;
 }
 
-.groupcard{
-    width:420px;
-    height:500px;
-    background-color:#DDDDDD;
-    border-radius:3px;
-    padding:5px;
-    padding-top:0px;
-    box-shadow: 1px 1px 1px #AAAAAA;
-    float:left;
+.depth_1{
+    padding:0px;
+    display:inline-block !important;
+    background-color:#D6E1C7;
+    margin:3px;
+    min-height:50px;
+    border:0px;
 }
 
-.groupcard-2{
-    width: 210px;
-    float:left;
-}
-
-
-.groupcard .titlegroup{
-    -webkit-font-smoothing: antialiased;
-    color: #403B33;
-    font-size: 20px;
-    font-weight: 400;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    padding:10px;
-    padding-left:3px;
-    cursor:pointer;
-}
-
-
-
-.card {
+.depth_2{
+    margin:0px;
+    padding:0px;
     width:200px;
     background-color:#FFFFFF;
     border-radius:3px;
-    margin-bottom:3px;
+    margin:3px;
     box-shadow: 1px 1px 1px #AAAAAA;
     min-height:50px;
+}
+
+.card {
+    padding:4px;
 }
 
 .card:hover{
     background-color:#f5f5f5;
 }
 
-.card .card-title{
+.card-title{
     -webkit-font-smoothing: antialiased;
     color: #403B33;
     font-size: 13px;
     font-weight: 400;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    padding:7px;
-    padding-left:10px;
     padding-bottom:0px;
+    cursor:pointer;
+}
+
+.groupcard-title{
+    -webkit-font-smoothing: antialiased;
+    color: #403B33;
+    font-size: 16px;
+    font-weight: 400;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    padding-bottom:0px;
+    padding:5px;
     cursor:pointer;
 }
 
@@ -247,11 +239,9 @@ h2{
     resize: none;
 }
 
-
 #modal-title:hover{
     background-color: #f5f5f5;
 }
-
 
 .title-editing{
     padding:5px !important;
@@ -293,7 +283,6 @@ h2{
     border-radius: 3px;
 }
 
-
 .note-toolbar{
     background-color:#ffffff !important;
     border:1px #999999 !important;
@@ -327,7 +316,6 @@ h2{
 .btn-sm{
     border-radius:1px !important;
 }
-
 
 .modal-card-info{
     margin-bottom:10px;
@@ -364,49 +352,3 @@ h2{
 /*#COLOR BLANCO: EDEBE6;*/
 /* COLOR NEGRO: #403B33 */
 /* COLOR VERDE SUAVE: #D6E1C7*/
-
-
-.card-button-bar{
-    display:block;
-    text-align:right;
-    padding-right:4px;
-    height:16px;
-    padding-bottom:4px;
-}
-
-.card .card-button-bar .button-list{
-    color:#CCCCCC;
-    font-size: 13px;
-    top:0px;
-    line-height:13px;
-    display:none;
-}
-
-.card .card-button-bar .button-list span{
-    cursor:pointer;
-}
-
-.card .card-button-bar .button-list span:hover{
-    cursor:pointer;
-    color:#999999;
-}
-
-
-
-
-
-
-
-
-
-
-.groupcard{
-    float:left;
-    margin-right:10px;
-}
-
-
-.card {
-    float:left;
-    margin-right:5px;
-}
