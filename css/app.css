@@ -30,7 +30,7 @@ a:hover{
 h2,h3{
     -webkit-font-smoothing: antialiased;
     color: #403B33;
-    font-size: 30px;
+    font-size: 30px !important;
     font-weight: 300;
     letter-spacing: -.01em;
     line-height: 1.3;

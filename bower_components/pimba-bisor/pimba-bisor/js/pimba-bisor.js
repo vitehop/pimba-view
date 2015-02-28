@@ -1,29 +1,33 @@
 var PimbaBisor = function (aOptions) {
 
     var self = this;
+    // Situación del ratón y timer para dragorder
+    this.mouseX;
+    this.mouseY;
+    this.timerDrag;
+    this.timerDuration = 300;
+
+    $(document).mousemove(function(e) {
+        self.mouseX = e.pageX;
+        self.mouseY = e.pageY;
+    });
 
     /* Propiedades */
     var dataWidgetOrigin               = new Array();
-    this.depthHover                    = new Array();
-    this.widgetMainDepthWidth          = 100;
-    this.widgetMainDepthHeight         = 100;
     this.currentWidgetDragging         = null;
-    this.currentWidgetOn               = null;
     this.currentFatherOfWidgetDragging = null;
-    this.mouseX                        = 0;
-    this.mouseY                        = 0;
-    this.maxDepth                      = 4;
     this.showSelectorCards             = aOptions['showSelectorCards'];
-    this.gridWidth                     = 20;
-    this.gridHeight                    = 20;
 
     // Contenedor de las acciones en los widgets
     if (aOptions['widgetContainerActionClass'] != '') {
-        this.widgetContainerActionClass    = aOptions['actions'];
+        this.widgetContainerActionClass    = aOptions['widgetContainerActionClass'];
     } else {
         this.widgetContainerActionClass    = 'actions';
     }
+
+    // Acciones predefinidas por el usuario
     this.actions                       = aOptions["actions"];
+
     /* Callbacks para refresco de información*/
     this.cb_init                       = aOptions['cb_init'];
     this.cb_change_select              = aOptions['cb_change_select'];
@@ -32,12 +36,26 @@ var PimbaBisor = function (aOptions) {
     this.cb_create_widget              = aOptions['cb_create_widget'];
     this.cb_delete_widget              = aOptions['cb_delete_widget'];
 
+    // Cálculo de columnas automáticas al soltar un widget
+    if (aOptions['bootstrapColumnsAutoOnDrop'] != undefined) {
+        this.bootstrapColumnsAutoOnDrop = aOptions['bootstrapColumnsAutoOnDrop'];
+    } else {
+        this.bootstrapColumnsAutoOnDrop = true;
+    }
+
+    // Datos de los widgets en estático para el inicio:
+    if (aOptions['widgetsData'] != undefined) {
+        this.widgetsData               = this.dataWidgetOrigin = aOptions['widgetsData'];
+    }
+
     /* Control de la instalación tipo bower o pelo */
     if (aOptions["bowerInstallation"] == undefined) {
         this.bowerInstallation        = true;
     } else {
         this.bowerInstallation        = aOptions["bowerInstallation"];
     }
+
+    this.ready                        = false;
 
     /*Template para el widget, si no se definen se usan por defecto */
     if (typeof(aOptions['depthTemplates']) == 'undefined') {
@@ -51,38 +69,11 @@ var PimbaBisor = function (aOptions) {
     }
 
     this.constructor = function(aOptions) {
-        console.log('[Bisor]constructor')
 
         /* Ejecutamos callback de inicio */
         if (typeof(this.cb_init) === 'function') {
             this.cb_init(self);
         }
-
-        /****************************************************  Eventos JQuery*/
-        /** Gestión de evento para cambio de perspectiva**/
-        $("body").on('change', '#rze_perspectives', function() {
-            var optionSelect = $("#rze_perspectives select").val();
-            if ( parseInt(optionSelect) > 0) {
-                self.clearDashboard();
-                if (typeof(self.cb_change_select) === 'function' ) {
-                    self.cb_change_select(self, $("#rze_perspectives select").val());
-                }
-            } else if (parseInt(optionSelect) == 0) {
-                self.clearDashboard();
-            }
-
-        });
-
-        /** Gestión de evento para refresh widget**/
-        $("body").on('click', '.refresh_card_button', function() {
-            var optionSelect = $("#rze_perspectives select").val();
-            if (parseInt(optionSelect) > 0) {
-                self.clearDashboard();
-                if (typeof(self.cb_change_select) === 'function' ) {
-                    self.cb_change_select(self, $("#rze_perspectives select").val());
-                }
-            }
-        });
 
         /* Cargámos el template controlando los origenes, si la instalación es bower o no */
         var bowerSource = "";
@@ -90,13 +81,15 @@ var PimbaBisor = function (aOptions) {
             var bowerSource = 'bower_components/pimba-bisor/';
         }
 
-        self.loadStaticTemplates(bowerSource);
+        // Cargamos vía AJAX las templates
+        self.loadStaticTemplates();
+
     }
 
     //***************************************************************** MÉTODOS
     /*
-    * Incorpora a self.widgetContainerActionClass una acción personalizada
-    */
+     * Incorpora a self.widgetContainerActionClass una acción personalizada
+     */
     this.addAction = function(divActionsContainer, aOptions) {
         var action = $("<div>", aOptions);
         $(action).appendTo(divActionsContainer);
@@ -106,33 +99,123 @@ var PimbaBisor = function (aOptions) {
      * Inicia pimba-bisor
      **/
     this.go = function() {
-        console.log("[Bisor] Go");
         self.clearDashboard();
         /* Creamos físicamente cada widget desde el array de datos */
         self.createWidgets(self.dataWidgetOrigin);
 
-        /* Redibujamos widgets*/
-        self.widgetsRedraw();
+        self.updateResizers();
+        //Bindeos para controles que hacen resizable mediante bootstrap los widgets
+        self.resizeBindControls();
 
-        /* --------------------------------------- Coordenadas de mouse*/
-        $("body").mousemove(function(e){
-            var parentOffset = $(this).parent().offset();
-            //or $(this).offset(); if you really just want the current element's offset
-            var relX = e.pageX - parentOffset.left;
-            var relY = e.pageY - parentOffset.top;
+    }
 
-            self.mouseX = relX;
-            self.mouseY = relY;
+    /*
+     * Reposiciona las capas de resizamiento del widget indicado
+     * */
+    this.updateResizersForWidget = function (widgetId) {
+        var widget = $("#" + widgetId);
+
+        //var orderTop = widget.find(".drag_order_top");
+        //orderTop.width(orderTop.parent().innerWidth());
+        //orderTop.position(   { of : "#" + widget.attr("id"), at: 'center top', my: 'center top' });
+
+        //var orderBottom = widget.find(".drag_order_bottom");
+        //orderBottom.width(orderBottom.parent().innerWidth());
+        //orderBottom.position({ of : "#" + widget.attr("id"), at: 'center bottom', my: 'center bottom' });
+
+        var orderLeft = $("#" + widgetId+ ">.drag_order_left");
+        orderLeft.height($("#" + widgetId).innerHeight());
+        orderLeft.position(  { of : "#" + widget.attr("id"), at: 'left', my: 'left' });
+
+        var orderRight = $("#" + widgetId+ ">.drag_order_right");
+        orderRight.height($("#" + widgetId).innerHeight());
+        orderRight.position( { of : "#" + widget.attr("id"), at: 'right', my: 'right' });
+
+    }
+
+    /*
+     * Bindea los eventos sobre las capas de resize para los widgets
+     * */
+    this.resizeBindControls = function() {
+        $( ".resize_top" ).on( "click", function() {
+            var widget = $(this).parent();
+            widget.height(widget.height()-100);
+            self.updateResizers();
         });
+
+        $( ".resize_bottom" ).on( "click", function() {
+            var widget = $(this).parent();
+            widget.height(widget.height()+100);
+            self.updateResizers();
+        });
+
+        // Resize Izquierda
+        $( ".resize_left" ).on( "click", function() {
+            var widget = $(this).parent();
+
+            var currentColMd = self.getColMdForWidget(widget.attr("id"));
+
+            if (currentColMd > 1 ) {
+                widget.removeClass("col-md-" + currentColMd);
+                widget.addClass("col-md-"+parseInt(currentColMd - 1))
+                self.updateResizers();
+            }
+        });
+
+        // Resize Right
+        $( ".resize_right" ).on( "click", function() {
+            var widget = $(this).parent();
+
+            var currentColMd = self.getColMdForWidget(widget.attr("id"));
+
+            if ( currentColMd < 12) {
+                widget.removeClass("col-md-" + currentColMd);
+                widget.addClass("col-md-"+parseInt(currentColMd + 1))
+                self.updateResizers();
+            }
+        });
+
+        $( ".resize_control" ).on( "mouseenter", function() {
+            $( this ).fadeTo( "fast", 1 );
+        });
+
+
+        $( ".resize_control" ).on( "mouseout", function() {
+            $( this ).fadeTo( "fast", 0 );
+        });
+    }
+
+    this.updateResizers = function() {
+        $(".rze_widget").each(function( index ) {
+            self.updateResizersForWidget($(this).attr("id"))
+        });
+
+        //$(".drag_order").hide();
+    }
+
+    /*
+     * Devuelve el tamaño de la columna bootstrap para un widget (class col-md-x)
+     * */
+    this.getColMdForWidget = function(widgetId) {
+        var widget = $("#" + widgetId);
+        for (var index = 1; index<=12;index++) {
+            if (widget.hasClass("col-md-"+index)) {
+                return index;
+            }
+        }
+
+        return false;
     }
 
     /*
      * Carga templates para dialogo y para depth de tarjetas
      **/
-    this.loadStaticTemplates = function(prefixBower) {
-        console.log("[Bisor]loadStaticTemplates");
+    this.loadStaticTemplates = function() {
 
         // Templates para widgets
+        var elementosCargados = 0;
+        var elementosParaCargar= Object.keys(self.depthTemplates).length;
+
         for (var i in self.depthTemplates) {
 
             if (self.bowerInstallation == true) {
@@ -145,6 +228,10 @@ var PimbaBisor = function (aOptions) {
                 type: 'GET',
                 url: fileRoute,
                 success: function(data) {
+                    elementosCargados++;
+                    if (elementosCargados == elementosParaCargar) {
+                        self.ready = true;
+                    }
                     $(".rze_container").after(data);
                 },error: function(){ console.log("Error loadTemplateWidget[depthTemplates]");  }
             });
@@ -155,7 +242,6 @@ var PimbaBisor = function (aOptions) {
      * Establece los datos desde un array json
      **/
     this.setJSONDataWidgets = function(data) {
-        console.log("[Bisor] set JSON widgets data");
         self.dataWidgetOrigin = data;
     }
 
@@ -176,7 +262,6 @@ var PimbaBisor = function (aOptions) {
      * 
      */
     this.setWidgetPositionXYInArray = function (widgetId, X, Y) {
-        console.log("[Bisor]setWidgetPositionXYInArray");
 
         for (var i = 0; i< dataWidgetOrigin.length; i++) {
             if (dataWidgetOrigin[i]["_id"] == widgetId) {
@@ -207,85 +292,21 @@ var PimbaBisor = function (aOptions) {
         }
     }
 
-    /*
-     * Redibuja todos los widgets
-     **/
-    this.widgetsRedraw = function() {
-        $(".rze_container > .rze_widget").each(function( index ) {
-
-            self._widgetRedrawChildrens(this);
-
-            $(this).css("top", 0);
-            $(this).css("left", 0);
-            $(this).css("position", "relative");
-
-            /*Set del Tag de depth*/
-            $( this ).attr("data-depth", "0");
-
-        });
-
-        self.setClassByDataDepth();
-    }
-
-    /*
-     * Redibuja todos los widgets dentro del widget dado
-     **/
-    this._widgetRedrawChildrens = function(oChildren) {
-        var offsetChildrenX = 0;
-        var offsetChildrenY = 10;
-        var childrenWidth = self.widgetMainDepthWidth;
-        var childrenHeight = self.widgetMainDepthHeight;
-        var separation = 10;
-
-        $(oChildren).children(".rze_widget").each(function( index ) {
-            /* Control de la posición */
-            $(this).css("position", "relative");
-            $(this).css("top", 10);
-            $(this).css("left", 0);
-
-            /*Set del Tag de depth*/
-            var depth = $( this ).parents(".rze_widget").length;
-            $( this ).attr("data-depth", depth);
-
-            self._widgetRedrawChildrens(this);
-        });
-
-    }
-
-    /**
-     * Asigna las clases de profundidad en función del data-depth del widget
-     **/
-    this.setClassByDataDepth = function() {
-        $(".rze_widget").each(function( index ) {
-            for (i=0; i <= self.maxDepth; i++) {
-                $(this).removeClass("depth_" + i);
-            }
-            var depth = $( this ).parents(".rze_widget").length;
-            $(this).addClass("depth_" + depth);
-            $(this).attr("data-depth", depth);
-        });
-    }
-
-    /**
-     * Refresca el estilo 'hover' de los widets cuando se apilan/sobreponen
-     **/
-    this.refreshCascadeSelectWidgets = function(){
-
-        $(".rze_widget").each(function( index ) {
-            $(this).removeClass("rze_widget_hovered");
-        });
-
-        for (i=0; i<self.depthHover.length; i++) {
-            $("#"+self.depthHover[i]).addClass("rze_widget_hovered");
-            var depth = $("#"+self.depthHover[i]).attr("data-depth");
-        }
-    }
-
     /**
      * Crea capa de acciones en un widget y lo hace draggable y droppable
      **/
     this.setupWidget = function(obj, widgetData) {
+
         /* Container de acciones en el widget*/
+        var divActionOrderTop    = $("<div>", { "class": "drag_order drag_order_top"});
+        var divActionOrderBottom = $("<div>", { "class": "drag_order drag_order_bottom"});
+        var divActionOrderLeft   = $("<div>", { "class": "drag_order drag_order_left"});
+        var divActionOrderRight  = $("<div>", { "class": "drag_order drag_order_right"});
+        $(obj).append(divActionOrderTop);
+        $(obj).append(divActionOrderBottom);
+        $(obj).append(divActionOrderLeft);
+        $(obj).append(divActionOrderRight);
+
         var divActions = $("<div>", {
             "class": self.widgetContainerActionClass
         });
@@ -298,7 +319,6 @@ var PimbaBisor = function (aOptions) {
 
         $(obj).append(divActions);
 
-
         var divContent = $("<div>", {
             "class": 'content'
         });
@@ -308,15 +328,16 @@ var PimbaBisor = function (aOptions) {
         if (!self._isWidgetFirstDepth(obj.attr("id"))) {
             /* Añadimos Tooltip de arrastre (la banza izquierda) */
             var div = $("<div>", {
-                "class": 'move glyphicon glyphicon-move',
-                "title": 'Move card'
+                "class": 'move label label-primary',
+                "title": 'Move card',
+                'text': 'Move'
             });
-            $(divActions).prepend(div);
+            //$(divActions).prepend(div);
         }
 
         // Añadimos la capa para los hijos
         var divChilds =  $("<div>", {
-            "class": 'childs'
+            "class": 'childs row'
         });
 
         divChilds.appendTo(obj);
@@ -324,124 +345,181 @@ var PimbaBisor = function (aOptions) {
         /* Si no se indica parent se crea en el dashboard */
         if (widgetData['parent']== false) {
             obj.appendTo("div.rze_container");
+            obj.addClass("dashboard");
+            var columnas = self.getColMdForWidget($(obj).attr("id"));
+            $(obj).removeClass("col-md-"+columnas);
+            $(obj).addClass("col-md-12");
         } else {
             obj.appendTo("#" + widgetData['parent'] + "> .childs");
         }
 
-        //$(obj).resizable();
-
+        // HACEMOS EL WIDGET DRAGGABLE
         $(obj).draggable({
-            snap       : ".containerDev",
-            containment: ".rze_container",
-            handle     : "div.move",
+            //handle     : "div.move",
             zIndex     : 10,
-            grid: [ self.gridWidth, self.gridHeight ],
+            scroll:true,
+            cursor: 'move',
+            opacity: 0.2,
+            refreshPositions:true,
+            appendTo: 'body',
+            cursorAt: {
+                top: 20,
+                left: 20
+            },
+            helper: function (){
+                return $("<div style='width: 40px;height:40px;background-color:red;' class='hola'></div>");
+            },
             start: function(event, ui) {
+                //$(".drag_order").show();
 
                 var idWidget = $(this).attr("id");
-                $(this).addClass("current");
-
                 self.currentWidgetDragging = idWidget;
+
                 var divParent = $(this).parents(".rze_widget");
                 if (divParent.length > 0) {
                     self.currentFatherOfWidgetDragging = divParent;
                 }
+            },
+            drag: function(event, ui) {
+                var offset = ui.helper.offset();
 
-                $(this).draggable( "option", "zIndex", 15 );
-                $(this).addClass("rze_widget_dragging");
-
-                $(".rze_widget").css("overflow", "visible");
-                $(this).find(".rze_widget").hide();
+                $(".hola").css("top", self.mouseY);
+                $(".hola").css("left", self.mouseX);
             },
             stop: function() {
+                //$(".drag_order").hide();
+                $(".rze_ghost").remove();
                 self.currentWidgetDragging = null;
                 self.currentFatherOfWidgetDragging = null;
-                $(this).draggable( "option", "zIndex", 10 );
-                $(this).removeClass("rze_widget_dragging");
-                $(this).find(".rze_widget").show();
-                $(".rze_widget").css("overflow", "hidden");
-                $(this).removeClass("current");
+            }
+        });
+
+        $(divActionOrderRight).droppable({
+            greedy: true,
+            over: function (event, ui) {
+                var widgetSobre = $(this).parent().attr("id");
+                var doReplicate = function(event, ui) {
+
+                    $("#"+widgetSobre).after($("#"+self.currentWidgetDragging));
+                    $("#"+self.currentWidgetDragging).fadeIn('fast');
+                    self.updateResizers();
+                    console.log("[Bisor] over - drag_border_right from: " + widgetSobre)
+                }
+
+                self.timerDrag = setTimeout(doReplicate, self.timerDuration);
+
+            },
+            out: function (event, ui) {
+                $(".rze_ghost").remove();
+                clearTimeout(self.timerDrag);
+                $(this).removeClass("rze_widget_hovered")
+            },
+            drop: function (event, ui) {
+            }
+        });
+
+        $(divActionOrderLeft).droppable({
+            greedy: true,
+            over: function (event, ui) {
+                var widgetSobre = $(this).parent().attr("id");
+                var doReplicate = function(event, ui) {
+                    $("#"+widgetSobre).before($("#"+self.currentWidgetDragging));
+                    $("#"+self.currentWidgetDragging).fadeIn('fast');
+
+                    self.updateResizers();
+                    console.log("[Bisor] over - drag_border_left from: " + widgetSobre)
+                }
+
+                self.timerDrag = setTimeout(doReplicate, self.timerDuration);
+
+            },
+            out: function (event, ui) {
+                $(".rze_ghost").fadeOut('fast');
+                clearTimeout(self.timerDrag);
+            },
+            drop: function (event, ui) {
             }
         });
 
         /*-----------------------Creamos la configuración droppable básica*/
-        $(obj).droppable({
+        $(obj).find(">.content").droppable({
             accept: '.rze_widget',
+            greedy: true,
             over: function (event, ui) {
-                var idWidget = $(this).attr("id");
-                self.currentWidgetOn = idWidget;
+                var widgetSobre = $(this).parent().attr("id");
+                $("#"+self.currentWidgetDragging).hide();
+                $("#" + widgetSobre + " >.childs").append($("#"+self.currentWidgetDragging));
+                $("#"+self.currentWidgetDragging).fadeIn('fast');
 
-                self.depthHover.push(idWidget);
-                self.refreshCascadeSelectWidgets();
+                console.log("[Bisor] over - >.contene from: " + widgetSobre)
             },
             out: function (event, ui) {
 
-                if (self.depthHover.length == 0) {
-                    self.currentWidgetOn = null;
-                } else {
-                    var stackHover = self.depthHover.pop();
-                    var stackLastAfterPop = self.depthHover[self.depthHover.length-1];
-                    self.currentWidgetOn = stackLastAfterPop;
-                }
-
-                self.refreshCascadeSelectWidgets();
             },
             drop: function (event, ui) {
-                /* HACK Jquery: Para evitar que se dispare el drop hacia atrás
-                 * comprobamos adcionalmente que el drop que ejecuta esto, es el del
-                 * widget*/
-                if (self.currentWidgetOn == $(this).attr("id")) {
-                    // Solo hago cosas si cambio de padre el widget que arrastro
-                    if (self.currentWidgetOn != $("#"+self.currentWidgetDragging).parent().parent().attr("id")) {
-                        /* callback de actualización */
-                        if (typeof(self.cb_update_widget) === 'function' ) {
-                            self.cb_update_widget(self, {
-                                '_id': self.currentWidgetDragging,
-                                'parent': self.currentWidgetOn,
-                                'title': $(self.currentWidgetDragging + " [name='title']").val(),
-                                'description': $(self.currentWidgetDragging + " [name='description']").val(),
-                                'from': (self.currentFatherOfWidgetDragging != null) ? self.currentFatherOfWidgetDragging.attr("id") : null
-                            });
-                        }
-                        // Cambiamos el padre en el array de datos
-                        self.changeWidgetParentInArray(self.currentWidgetDragging, self.currentWidgetOn);
-                        // Movemos el widget físicamente
-                        $("#"+self.currentWidgetOn + "> .childs").append($("#"+self.currentWidgetDragging));
-                        // Cambiamos la posición X e Y en el array de datos (con el widget ya movido físicamente)
-                        self.setWidgetPositionXYInArray(self.currentWidgetDragging, 69, 69);
-
-                        $("#"+self.currentWidgetDragging).css("top", 0);
-                        $("#"+self.currentWidgetDragging).css("left", 0);
-
-                        /* Redibujamos la capa destino */
-                        self._widgetRedrawChildrens($("#"+self.currentWidgetOn));
-                        self.setClassByDataDepth();
-
-                        /* Actualizamos el origen si existiese */
-                        if (self.currentFatherOfWidgetDragging != null){
-                            self._widgetRedrawChildrens(self.currentFatherOfWidgetDragging);
-                            self.currentFatherOfWidgetDragging = null;
-                        }
-                    } else {
-                        // Cambiamos la posición X e Y en el array de datos (con el widget ya movido físicamente)
-                        self.setWidgetPositionXYInArray(self.currentWidgetDragging, 69, 69);
-                    }
-                    $(".rze_widget").css("overflow", "hidden");
-                    $("#"+self.currentWidgetOn).find(".rze_widget").show();
-                    self.depthHover = new Array();
-                    self.refreshCascadeSelectWidgets();
-                }
             }
         });
     }
 
     /*
-     * Añade opciones al select de perspectivas desde userData
-     */
-    this.fillSelectPerspectives = function(perspectives) {
-        $("#rze_perspectives select").append(new Option('Select card master', 0, false, false));
-        for (var i=0; i<perspectives.length;i++) {
-            $("#rze_perspectives select").append(new Option(perspectives[i]['title'], perspectives[i]['_id'], false, false));
+     * Cambia el col-md de un widget en relacion al resto de su mismo nivel
+     * */
+    this.calcBootstrapGrid = function(widgetId) {
+        // Eliminamos actual col-md
+        for (i=1;i<=12;i++) {
+            $("#"+widgetId).removeClass("col-md-"+i);
+        }
+
+        if (self.bootstrapColumnsAutoOnDrop) {
+
+            var widgetParent = $("#"+widgetId).parent().parent();
+            var hermanos     = widgetParent.find(">.childs >.rze_widget");
+            var numHermanos  = hermanos.length;
+
+            var columnas = 0;
+            for (var i=0; i<hermanos.length;i++) {
+                var idHermano= $(hermanos[i]).attr("id");
+                if ( idHermano != widgetId) {
+                    columnas+=self.getColMdForWidget(idHermano);
+                }
+            }
+
+
+            // Si es menor que 12, ocupamos tó el espacio libre
+            if (columnas < 12) {
+                $("#"+widgetId).addClass("col-md-" + parseInt(12-columnas));
+            } else {
+                var newColMd = 12/ numHermanos;
+                // Si es entero, todas son iguales con el cambio
+                if (Math.floor(newColMd) == newColMd && $.isNumeric(newColMd)) {
+                    // Ancho igualpara todos;
+
+                    for (var i=0; i<hermanos.length;i++) {
+                        for (var j=1;j<=12;j++) { $(hermanos[i]).removeClass("col-md-" + j); }
+                        $(hermanos[i]).addClass("col-md-"+newColMd);
+                    }
+
+                } else {
+                    var newColMd = Math.floor(newColMd);
+                    var ocupacion = newColMd*hermanos.length;
+
+                    var diferencia = 0;
+
+                    if (ocupacion < 12) {
+                        diferencia = 12 - ocupacion;
+                    }
+
+
+                    for (var i=0; i<hermanos.length;i++) {
+                        for (var j=1;j<=12;j++) { $(hermanos[i]).removeClass("col-md-" + j); }
+                        if (i == 0) {
+                            $(hermanos[i]).addClass("col-md-" + parseInt(newColMd + diferencia));
+                        } else {
+                            $(hermanos[i]).addClass("col-md-"+newColMd);
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -450,9 +528,8 @@ var PimbaBisor = function (aOptions) {
      * recursivamente
      **/
     this.createWidgets = function(widgetsData) {
-            console.log("[Bisor] createWidgets");
-            widgetsData["parent"] = false;
-            self.createWidgetsForWidget(widgetsData);
+        widgetsData["parent"] = false;
+        self.createWidgetsForWidget(widgetsData);
     }
 
     /*
@@ -460,7 +537,6 @@ var PimbaBisor = function (aOptions) {
      * recursivamente
      */
     this.createWidgetsForWidget = function(widgetData) {
-        console.log("[Bisor] createWidgetsForWidget");
         self.addWidget(widgetData);
 
         var widgetsChildren = widgetData["childs"];
@@ -521,19 +597,30 @@ var PimbaBisor = function (aOptions) {
             idWidget = self._randomIdentifiers(1111, 9999);
         }
 
+        // Fix para cuando no hay definidas columnas, suponemos 1 como default
+        var colmd;
+        if (widgetData["colmd"] == undefined) {
+            colmd = 4;
+        } else {
+            colmd = widgetData["colmd"];
+        }
+
         // Contenedor principal del widget
         var divWidget = $("<div>", {
             "id": idWidget,
-            "class": 'rze_widget draggable droppable',
+            "class": 'rze_widget col-md-' + colmd,
             "data-draggable": "true"
         });
+
+        //$('[data-toggle="tooltip"]').tooltip({
+        //    'placement': 'top'
+        //});
 
         // Resto de configuraciones en el widget
         self.setupWidget(divWidget, widgetData);
         self.loadDataInTemplateWidget(widgetData);
 
-        self.setClassByDataDepth();
-        self.widgetsRedraw();
+        //self.setClassByDataDepth();
     }
 
     /*
@@ -542,7 +629,6 @@ var PimbaBisor = function (aOptions) {
     this.loadDataInTemplateWidget = function(widgetData) {
         var widget   = $("#" + widgetData['_id']);
         var depth = widget.parents(".rze_widget").length;
-
         var templatesDefined = Object.keys(self.depthTemplates).length;
 
         if (depth >= templatesDefined) {
@@ -560,6 +646,8 @@ var PimbaBisor = function (aOptions) {
                 widget.children(".content").find("[data-pimba-field='" + i + "']").text(widgetData[i]);
             }
         }
+
+
     }
 
     /**
