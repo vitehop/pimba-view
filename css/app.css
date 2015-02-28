@@ -114,7 +114,7 @@ h2{
     cursor:pointer;
 }
 
-.perspective-item .title{
+.perspective-item .perstitle{
     -webkit-font-smoothing: antialiased;
     color: #403B33;
     font-size: 13px;
