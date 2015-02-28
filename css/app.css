@@ -144,6 +144,21 @@ h2{
 
 }
 
+#gravatar{
+padding-right:5px;
+    float:left;
+}
+
+#gravatar img{
+    -moz-border-radius:50%;
+    -webkit-border-radius:50%;
+    border-radius:50%;
+/*
+    box-shadow: 1px 1px 1px #AAAAAA;
+*/
+}
+
+
 .logout-button a{
     font-weight:300;
     color:#EDEBE6;
@@ -154,6 +169,13 @@ h2{
 /* **
  * CARD TEMPLATES (& NO TEMPLATES...)
  ** */
+
+.rze_widget{
+        padding:3px !important;
+    box-shadow: 1px 1px 1px #AAAAAA;
+    border:1px solid #AAA;
+
+}
 
 .rze_widget .content{
     margin-left:0px !important;
