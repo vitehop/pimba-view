@@ -118,6 +118,7 @@ $(document).ready(function() {
         cardModel.title("Enter title...");
         cardModel.description("Enter description...");
         cardModel.user(userModel.id);
+        cardModel.parent(undefined);
         cardModel.isNewCard(true);
 
         $('#editModal').modal(); // show empty modal window
@@ -516,9 +517,9 @@ $(document).ready(function() {
         return $.ajax({
             type: 'POST',
             data: {
-                title: card.title,
-                description: card.description,
-                parent: card.parent
+                title: card.title(),
+                description: card.description(),
+                parent: card.parent()
             },
             url: apiserver + "/api/cards/",
             dataType: 'json',
@@ -527,15 +528,34 @@ $(document).ready(function() {
             },
             success: function (response) {
 
-                // Estos datos sí estan en el response pero parece que no es la ruta adeucada
-
-
                 card.id(response._id);
                 card.user(response.user);
                 card.childs(response.childs);
                 card.parent(response.parent);
                 card.isNewCard(false);
                 console.log("[POST /api/cards/] Id: " + card.id() + " Title: " + card.title());
+
+                // Si es nueva perspectiva, la cargo en pantalla directamente y actualizo el listado de perspectivas
+                // del usuario
+                if (card.parent()==undefined){
+
+                    getUser(userModel).done(function () {
+
+                        getPerspective(card.id()).done(function () {
+
+                            pimbaBisor.setJSONDataWidgets(perspectiveModel.currentPerspective());
+                            pimbaBisor.go();
+
+
+                        }).fail(function () {
+                            console.log("Error loading perpective from card: " + card.title());
+                        });
+
+                    }).fail(function () {
+                        console.log("Error loading user data");
+                    });
+                }
+
 
             },
             error: function (response) {
