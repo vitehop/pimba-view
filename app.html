@@ -36,7 +36,7 @@ FIXED-TOP MAIN HEADER
         <ul class="navbar-nav">
             <li>
                 <p class="perspectives-button" data-toggle="dropdown" href="#">
-                    My perspectives
+                    Projects
                     <span class="caret"></span>
                 </p>
                 <div class="dropdown-menu pers-dropdown-menu list-group" role="menu" aria-labelledby="dLabel">
@@ -52,7 +52,7 @@ FIXED-TOP MAIN HEADER
 
                     </div>
 
-                    <a id="newPerspective" href="#" class="new-element-link">Create new perspective...</a>
+                    <a id="newPerspective" href="#" class="new-element-link">Create new project...</a>
 
 
                 </div>
@@ -112,7 +112,7 @@ EDIT/VIEW MODAL WINDOW
             <div class="modal-header">
                 <div class="row">
                     <div class="col-md-11">
-                        <div id="modal-title" data-bind="text: title">
+                        <div id="modal-title" data-bind="html: title">
                             Type card title...
                         </div>
                         <div class="title-savecancel-buttons">
@@ -142,7 +142,7 @@ EDIT/VIEW MODAL WINDOW
 
                         <div class="modal-card-info"></div>
 
-                        <div id="modal-description" data-bind="text: description">
+                        <div id="modal-description" data-bind="html: description">
                             Type card description...
                         </div>
 

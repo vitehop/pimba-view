@@ -11,8 +11,8 @@ else{
 
 // General config
 
-var apiserver = "http://localhost:8080";
-
+//var apiserver = "http://localhost:8080";
+var apiserver = "https://pimba-apiserver.herokuapp.com";
 
 
 
@@ -31,7 +31,6 @@ var cardModel = {
 };
 
 ko.applyBindings(cardModel,$('#editModal')[0]);
-
 
 var userModel = {
     username: ko.observable(),
