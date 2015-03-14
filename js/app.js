@@ -11,8 +11,8 @@ else{
 
 // General config
 
-//var apiserver = "http://localhost:8080";
-var apiserver = "https://pimba-apiserver.herokuapp.com";
+var apiserver = "http://localhost:8080";
+//var apiserver = "https://pimba-apiserver.herokuapp.com";
 
 
 
