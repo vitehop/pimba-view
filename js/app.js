@@ -1,6 +1,6 @@
 // Wait a sec... no token? please, go and login!
 if(!localStorage.token && !sessionStorage.token){
-    window.location.href ="../index.html";
+    window.location.href ="../login.html";
 }
 else{
     var token = (localStorage.token || sessionStorage.token);
@@ -144,7 +144,7 @@ $(document).ready(function() {
 
         localStorage.removeItem("token");
         sessionStorage.removeItem("token");
-        window.location.href = "index.html";
+        window.location.href = "../login.html";
     });
 
 
@@ -439,7 +439,7 @@ $(document).ready(function() {
             },
             error: function (response) {
                 console.log(response);
-                window.location.href = '../index.html';
+                window.location.href = '../login.html';
             }
         });
 
@@ -469,7 +469,7 @@ $(document).ready(function() {
             },
             error: function (response) {
                 console.log(response);
-                window.location.href = '../index.html';
+                window.location.href = '../login.html';
             }
         });
 
