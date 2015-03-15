@@ -159,11 +159,11 @@ $(document).ready(function() {
 
         var widgetId = $(this).closest('.rze_widget').attr("id");
 
-        $('#editModal').modal(); // show empty modal window
-
         // busco los detalles de la tarjeta y los planto en mi modelo
         getCard(cardModel, widgetId).done(function () {
-            console.log("Card " + cardModel.id() + " load success");
+
+            $('#editModal').modal(); // lanzo el modal solo cuando tengo los datos de la tarjeta
+
         });
 
         // Hide savecancel buttons so they don't appear initially
